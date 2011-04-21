@@ -4,11 +4,11 @@ module Mobilove
   
   class Text
     def initialize(key, route, from)
-      @key, @route, @from = key, route, CGI.escape(Iconv.conv('ISO-8859-1', 'utf-8', from))
+      @key, @route, @from = key, route, from
     end
   
     def send(to, message, debug_mode = false)
-      url = send_url(to, CGI.escape(Iconv.conv('ISO-8859-1', 'utf-8', message)), debug_mode)
+      url = send_url(to, message, debug_mode)
       response = RestClient.get(url)
       respond(response)
     end
@@ -16,7 +16,7 @@ module Mobilove
     private
   
     def send_url(to, message, debug_mode)
-      "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{message}&route=#{@route}&from=#{@from}&debug=#{debug_mode ? '1' : '0'}"
+      "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{URI.escape(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&charset=utf-8"
     end
     
     def respond(response)
