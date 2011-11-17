@@ -1,11 +1,11 @@
 module Mobilove
-  
+
   class InvalidNumber < Exception
   end
 
   class InvalidSender < Exception
   end
-  
+
   class MessageTooLong < Exception
   end
 
@@ -14,13 +14,13 @@ module Mobilove
 
   class InvalidRoute < Exception
   end
-  
+
   class AuthenticationFailed < Exception
   end
-  
+
   class NoCreditLeft < Exception
   end
-  
+
   class RouteCannotHandleProvider < Exception
   end
 
@@ -32,5 +32,8 @@ module Mobilove
 
   class UnknownError < Exception
   end
-  
+
+  class MessageIsNoUtf8String < Exeption
+  end
+
 end
