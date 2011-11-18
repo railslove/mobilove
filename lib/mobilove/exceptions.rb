@@ -33,7 +33,7 @@ module Mobilove
   class UnknownError < Exception
   end
 
-  class MessageIsNoUtf8String < Exeption
+  class MessageIsNoUtf8String < Exception
   end
 
 end

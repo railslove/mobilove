@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'uri'
 
 module Mobilove
@@ -7,19 +8,20 @@ module Mobilove
       @key, @route, @from = key, route, from
     end
 
-    def send(to, message, debug_mode = false)
-      url = send_url(to, message, debug_mode)
+    # concat: if true multiple messages will be concatenated if the text has more than 160 chars (70 unicode)
+    def send(to, message, debug_mode = false, concat = false)
+      url = send_url(to, message, debug_mode, concat)
       response = RestClient.get(url)
       respond(response)
     end
 
     private
 
-    def send_url(to, message, debug_mode)
+    def send_url(to, message, debug_mode, concat)
       if is_gsm0338_encoded? message
-        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{URI.escape(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&charset=utf-8"
+        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{URI.escape(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&charset=utf-8&concat=#{concat ? '1' : '0'}"
       else
-        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{string_to_hexadecimal_code_points(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&messagetype=unicode"
+        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{string_to_hexadecimal_code_points(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&messagetype=unicode&concat=#{concat ? '1' : '0'}"
       end
     end
 
