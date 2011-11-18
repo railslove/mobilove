@@ -1,5 +1,6 @@
 # coding: utf-8
 require 'uri'
+require 'iconv'
 
 module Mobilove
 
@@ -9,7 +10,7 @@ module Mobilove
     end
 
     # concat: if true multiple messages will be concatenated if the text has more than 160 chars (70 unicode)
-    def send(to, message, debug_mode = false, concat = false)
+    def send_message(to, message, debug_mode = false, concat = false)
       url = send_url(to, message, debug_mode, concat)
       response = RestClient.get(url)
       respond(response)

@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'mobilove'
 require 'rspec'
+require 'iconv'
 
 describe "Mobilove" do
 
@@ -13,15 +14,15 @@ describe "Mobilove" do
 
     it "should send text" do
       RestClient.should_receive(:get)
-      @a.send(49123, 'sometext')
+      @a.send_message(49123, 'sometext')
     end
 
     it "should return true" do
-      @a.send(49123, 'yer').should be_true
+      @a.send_message(49123, 'yer').should be_true
     end
 
     it "should return true for unicode text" do
-      @a.send(49123, 'some turkish text with an ı').should be_true
+      @a.send_message(49123, 'some turkish text with an ı').should be_true
     end
   end
 
@@ -32,16 +33,22 @@ describe "Mobilove" do
 
     it "should detect non gsm chars" do
       gsm_text = "@£$¥èéùìòÇ\fØø\nÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>\?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà\^\{\}\[~\]\|€"
-      @a.is_gsm0338_encoded?(gsm_text).should be_true
-      @a.is_gsm0338_encoded?("Tım").should be_false
+      @a.send(:is_gsm0338_encoded?, gsm_text).should be_true
+      @a.send(:is_gsm0338_encoded?, "Tım").should be_false
     end
 
     it "should transform utf8 to hexadecimal code points" do
-      @a.string_to_hexadecimal_code_points("arasında").should eql("00610072006100730131006e00640061")
+      @a.send(:string_to_hexadecimal_code_points, "arasında").should eql("00610072006100730131006e00640061")
     end
 
     it "should raise Error for trying convert non utf-8 string" do
-      @a.string_to_hexadecimal_code_points(42).should raise_error(Mobilove::MessageIsNoUtf8String)
+      lambda do
+        @a.send(:string_to_hexadecimal_code_points, 42)
+      end.should raise_error(Mobilove::MessageIsNoUtf8String)
+
+      lambda do
+        @a.send(:string_to_hexadecimal_code_points, Iconv.iconv("UCS-2", "utf-8", "utf-8 text").first)
+      end.should raise_error(Mobilove::MessageIsNoUtf8String)
     end
   end
 
@@ -55,7 +62,7 @@ describe "Mobilove" do
 
       it "should raise an InvalidNumber exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::InvalidNumber)
       end
     end
@@ -68,7 +75,7 @@ describe "Mobilove" do
 
       it "should raise an InvalidSender exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::InvalidSender)
       end
     end
@@ -81,7 +88,7 @@ describe "Mobilove" do
 
       it "should raise an MessageTooLong exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::MessageTooLong)
       end
     end
@@ -94,7 +101,7 @@ describe "Mobilove" do
 
       it "should raise an InvalidMessageType exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::InvalidMessageType)
       end
     end
@@ -107,7 +114,7 @@ describe "Mobilove" do
 
       it "should raise an InvalidRoute exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::InvalidRoute)
       end
     end
@@ -120,7 +127,7 @@ describe "Mobilove" do
 
       it "should raise an AuthenticationFailed exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::AuthenticationFailed)
       end
     end
@@ -133,7 +140,7 @@ describe "Mobilove" do
 
       it "should raise an NoCreditLeft exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::NoCreditLeft)
       end
     end
@@ -146,7 +153,7 @@ describe "Mobilove" do
 
       it "should raise an RouteCannotHandleProvider exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::RouteCannotHandleProvider)
       end
     end
@@ -159,7 +166,7 @@ describe "Mobilove" do
 
       it "should raise an FeatureNotSupportedByRoute exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::FeatureNotSupportedByRoute)
       end
     end
@@ -172,7 +179,7 @@ describe "Mobilove" do
 
       it "should raise an SMSCTransferFailed exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::SMSCTransferFailed)
       end
     end
@@ -185,7 +192,7 @@ describe "Mobilove" do
 
       it "should raise an UnknownError exception" do
         lambda do
-          @a.send(49123, 'test')
+          @a.send_message(49123, 'test')
         end.should raise_error(Mobilove::UnknownError)
       end
     end

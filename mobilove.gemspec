@@ -12,6 +12,10 @@ Gem::Specification.new do |s|
   s.summary      = "Small wrapper for sending text messages with mobilant.de"
   s.description  = "Use mobilove to send text messages with Ruby. Account on mobilant.de required."
 
+  s.add_dependency 'rest-client'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
+
   s.files        = `git ls-files app lib`.split("\n")
   s.platform     = Gem::Platform::RUBY
   s.require_path = 'lib'
