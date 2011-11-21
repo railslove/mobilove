@@ -9,20 +9,23 @@ module Mobilove
       @key, @route, @from = key, route, from
     end
 
-    # concat: if true multiple messages will be concatenated if the text has more than 160 chars (70 unicode)
-    def send_message(to, message, debug_mode = false, concat = false)
-      url = send_url(to, message, debug_mode, concat)
+    def send_message(to, message, options={})
+      url = send_url(to, message, options)
       response = RestClient.get(url)
       respond(response)
     end
 
     private
 
-    def send_url(to, message, debug_mode, concat)
+    # :debug_mode => true  //  Message will not be sent
+    # :concat     => true  //  Message will be sent as concatenated texts if it has more than 160 chars (70 unicode)
+    def send_url(to, message, options={})
+      options[:debug_mode] ||= false
+      options[:concat] ||= false
       if is_gsm0338_encoded? message
-        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{URI.escape(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&charset=utf-8&concat=#{concat ? '1' : '0'}"
+        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{URI.escape(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{options[:debug_mode] ? '1' : '0'}&charset=utf-8&concat=#{options[:concat] ? '1' : '0'}"
       else
-        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{string_to_hexadecimal_code_points(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{debug_mode ? '1' : '0'}&messagetype=unicode&concat=#{concat ? '1' : '0'}"
+        "http://gw.mobilant.net/?key=#{@key}&to=#{to}&message=#{string_to_hexadecimal_code_points(message)}&route=#{@route}&from=#{URI.escape(@from)}&debug=#{options[:debug_mode] ? '1' : '0'}&messagetype=unicode&concat=#{options[:concat] ? '1' : '0'}"
       end
     end
 
