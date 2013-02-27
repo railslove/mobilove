@@ -1,6 +1,5 @@
 # coding: utf-8
 require 'uri'
-require 'iconv'
 
 module Mobilove
 
@@ -53,7 +52,7 @@ module Mobilove
       def string_to_hexadecimal_code_points(message)
         if message.class.to_s == 'String' && message.encoding.to_s == 'UTF-8'
           hex_code = ''
-          Iconv.iconv("UCS-2BE", "UTF-8", message).first.each_char {|unicode_char| hex_code += unicode_char.unpack('H*').first}
+          message.encode(Encoding::UTF_16BE).each_char {|unicode_char| hex_code += unicode_char.unpack('H*').first}
           hex_code
         else
           raise MessageIsNoUtf8String.new("The message is either not a string or not UTF-8 encoded. MESSAGE: #{message}")
