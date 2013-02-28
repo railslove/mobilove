@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'mobilove'
 require 'rspec'
-require 'iconv'
 
 describe "Mobilove" do
 
@@ -47,7 +46,7 @@ describe "Mobilove" do
       end.should raise_error(Mobilove::MessageIsNoUtf8String)
 
       lambda do
-        @a.send(:string_to_hexadecimal_code_points, Iconv.iconv("UCS-2", "utf-8", "utf-8 text").first)
+        @a.send(:string_to_hexadecimal_code_points, "utf-8 text".encode(Encoding::UTF_16BE).unpack('n*'))
       end.should raise_error(Mobilove::MessageIsNoUtf8String)
     end
   end
