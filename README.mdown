@@ -1,0 +1,48 @@
+Mobilove
+------------
+
+Mobilove is an simple wrapper to send test messages with [Mobilant](http://mobilant.de).
+
+
+Installation
+------------
+
+Install Mobilove like any other Ruby gem:
+
+    gem install mobilove
+
+Or, if you're using Rails/Bundler, add this to your Gemfile:
+
+    gem "mobilove"
+
+and run at the command prompt:
+
+    bundle install
+
+
+Usage
+------------
+
+```ruby
+require "mobilove"
+
+# initialize a new Mobilove Text object with your API_KEY und the route config
+mobilove = Mobilove::Text.new(API_KEY, ROUTE, FROM)
+
+# available options:
+options = {
+  :debug_mode => false, # if true the message will not be send
+  :concat     => true  # if true the message will be sent as concatenated texts if it has more than 160 chars (70 unicode)
+}
+
+mobilove.send_message("+49123456789", "Hello from Mobilove", options) # sends a regular SMS
+mobilove.flash_message("+49123456789", "Hello from Mobilove", options) # sends a flash message
+
+```
+
+Questions
+------------
+
+if you have any questions please open an issue to this project.
+
+Copyright (c) Railslove, released under the MIT license
