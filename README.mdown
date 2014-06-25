@@ -1,7 +1,7 @@
 Mobilove
 ------------
 
-Mobilove is an simple wrapper to send test messages with [Mobilant](http://mobilant.de).
+Mobilove is an simple wrapper to send text messages with [Mobilant](http://mobilant.de).
 
 
 Installation
